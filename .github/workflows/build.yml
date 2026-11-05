@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  push:
+    branches: [main, 'arena/**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Maven build (Java 17)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B -ntp clean package
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TA_BlockTrigger-jar
+          path: target/TA_BlockTrigger-*.jar
+          if-no-files-found: error
+
+      # Attach the freshly built jar to the GitHub release matching the tag,
+      # or create the release when the tag does not have one yet.
+      - name: Attach jar to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" target/TA_BlockTrigger-*.jar --clobber
+          else
+            gh release create "$TAG" target/TA_BlockTrigger-*.jar \
+              --title "TA_BlockTrigger $TAG" \
+              --generate-notes
+          fi
