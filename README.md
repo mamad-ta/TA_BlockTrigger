@@ -9,7 +9,7 @@ to blocks — executed as the console or as the clicking player.
 
 [![Paper](https://img.shields.io/badge/Paper-1.20.1%2B-3b82f6?style=for-the-badge)](https://papermc.io)
 [![Java](https://img.shields.io/badge/Java-17%2B-f97316?style=for-the-badge)](https://adoptium.net)
-[![Version](https://img.shields.io/badge/version-1.0.0-22c55e?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-1.0.1-22c55e?style=for-the-badge)](#)
 [![No Dependencies](https://img.shields.io/badge/dependencies-none-8b5cf6?style=for-the-badge)](#)
 
 </div>
@@ -68,16 +68,28 @@ to blocks — executed as the console or as the clicking player.
 
 | | |
 |---|---|
-| **Server** | Paper 1.20.1 or newer |
-| **Java** | 17+ (21 recommended for 1.20.4+) |
+| **Server** | Paper **1.20.1 – 1.21.x** (any server whose Minecraft version is ≥ 1.20.1) |
+| **Java** | 17+ (21 required for 1.20.5+ / 1.21.x servers) |
 | **Dependencies** | None |
+
+### Tested / supported servers
+
+| Paper version | Status | Notes |
+|---|---|---|
+| 1.20.1 | ✅ **tested** | built against this API; reference version |
+| 1.20.2 – 1.20.4 | ✅ supported | same API surface, loads with `api-version: '1.20.1'` |
+| 1.20.5 – 1.20.6 | ✅ supported | needs Java 21 on the server |
+| 1.21.x | ✅ supported | needs Java 21; sounds resolved by key (no enum) |
+| < 1.20.1 | ❌ not supported | plugin will refuse to load |
+| Folia / Spigot / CraftBukkit | ❌ not supported | commands are dispatched on the main thread |
 
 ---
 
 ## 🚀 Installation
 
-1. Download **`TA_BlockTrigger-1.0.0.jar`** from the
+1. Download **`TA_BlockTrigger-1.0.1.jar`** from the
    [releases page](https://github.com/mamad-ta/TA_BlockTrigger/releases/latest)
+   — for older Paper 1.20.1 servers use **v1.0.0**, for 1.20.1+ (including 1.21.x) use **v1.0.1**
    (or build it yourself, see below).
    The repository contains **source code only** — binaries are never committed, the jar is
    always taken from the releases page (or from your own build).
@@ -101,7 +113,7 @@ cd TA_BlockTrigger
 mvn -B clean package
 ```
 
-Output: **`target/TA_BlockTrigger-1.0.0.jar`**
+Output: **`target/TA_BlockTrigger-1.0.1.jar`**
 
 Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT` with `--release 17`.
 To build for another Paper version, change the `paper.version` property in `pom.xml` —
@@ -332,8 +344,13 @@ broken by accident.
 
 ## 🧱 Compatibility
 
-- Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT`, `api-version: '1.20'`, Java 17 bytecode.
+- Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT`, `api-version: '1.20.1'`, Java 17 bytecode.
+  `api-version` declares the **minimum** server version, so the plugin loads on every Paper
+  release from 1.20.1 up to and including the 1.21.x line — a `'1.20'` value would have been
+  rejected on 1.20.1 servers that do not know that legacy version.
 - **No NMS**, no `CraftBukkit`, no version-specific code.
+- Backwards and forwards compatible in practice: no removed API is used, no enum constants are
+  compiled in (sounds go through reflection + keys), and no `1.20.5` item/dialog API is touched.
 - Sounds are played through key-based Adventure sounds, so they keep working on newer Paper
   versions where `org.bukkit.Sound` is no longer an enum.
 - Only long-stable events are used: `PlayerInteractEvent`, `BlockDamageEvent`,
