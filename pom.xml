@@ -7,7 +7,7 @@
 
     <groupId>com.mamadta</groupId>
     <artifactId>TA_BlockTrigger</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>TA_BlockTrigger</name>
