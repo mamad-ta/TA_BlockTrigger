@@ -1,5 +1,6 @@
-# Maven build output
+# Build output — the released jar is distributed via the Releases page, never committed
 target/
+/TA_BlockTrigger-*.jar
 
 # IDE files
 .idea/
