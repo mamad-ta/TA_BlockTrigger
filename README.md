@@ -1,6 +1,6 @@
 <div align="center">
 
-# TA_BlockTrigge
+# TA_BlockTrigger
 
 **Bind any command to any block. One click, and it runs.**
 
