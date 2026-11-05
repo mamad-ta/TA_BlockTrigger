@@ -38,7 +38,11 @@ public final class TABlockTrigger extends JavaPlugin {
     private CommandDispatcher commandDispatcher;
 
     private BukkitTask autoSaveTask;
-    private BukkitTask housekeepingTask;
+    private BukkitTask tickTask;
+
+    /** Housekeeping runs every 600 ticks (30 s), same cadence as before. */
+    private static final int CLEANUP_INTERVAL_TICKS = 600;
+    private int ticksSinceCleanup;
 
     /** Result of a plugin reload, used by {@code /bt reload}. */
     public record ReloadResult(int blocks, long millis) {
@@ -94,7 +98,9 @@ public final class TABlockTrigger extends JavaPlugin {
 
         // ------------------------------------------------------------ log
         if (configManager.isPluginEnabled()) {
-            getLogger().info("TA_BlockTrigger v" + getPluginMeta().getVersion() + " enabled - "
+            // getPluginMeta() only exists on Paper 1.20.4+; getDescription() works on
+            // Paper 1.20.1, Spigot and CraftBukkit alike.
+            getLogger().info("TA_BlockTrigger v" + getDescription().getVersion() + " enabled - "
                     + loaded + " block command(s) loaded in " + (System.currentTimeMillis() - start) + " ms.");
         } else {
             getLogger().warning("TA_BlockTrigger is DISABLED through settings.enabled in config.yml. "
@@ -170,9 +176,17 @@ public final class TABlockTrigger extends JavaPlugin {
             }, ticks, ticks);
         }
 
-        // Periodic housekeeping keeps the cooldown maps small (no memory leaks).
-        housekeepingTask = getServer().getScheduler().runTaskTimer(this,
-                () -> cooldownManager.cleanup(), 600L, 600L);
+        // One tick task drives two things:
+        //  1. the plugin-side tick counter used by the duplicate-interaction guard
+        //     (portable replacement for Paper's Bukkit.getCurrentTick()), and
+        //  2. the periodic housekeeping that keeps the cooldown maps small.
+        tickTask = getServer().getScheduler().runTaskTimer(this, () -> {
+            cooldownManager.tick();
+            if (++ticksSinceCleanup >= CLEANUP_INTERVAL_TICKS) {
+                ticksSinceCleanup = 0;
+                cooldownManager.cleanup();
+            }
+        }, 1L, 1L);
     }
 
     private void stopTasks() {
@@ -180,9 +194,9 @@ public final class TABlockTrigger extends JavaPlugin {
             autoSaveTask.cancel();
             autoSaveTask = null;
         }
-        if (housekeepingTask != null) {
-            housekeepingTask.cancel();
-            housekeepingTask = null;
+        if (tickTask != null) {
+            tickTask.cancel();
+            tickTask = null;
         }
     }
 

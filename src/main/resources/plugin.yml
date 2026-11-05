@@ -1,9 +1,9 @@
 name: TA_BlockTrigger
 version: '${project.version}'
 main: com.mamadta.tablocktrigger.TABlockTrigger
-api-version: '1.20.1'
+api-version: '1.20'
 author: MamaD_TA
-description: Allows administrators to assign commands to blocks and execute them through player interactions.
+description: Bind any command to any block. Works on Paper, Spigot and CraftBukkit (1.20.1+).
 
 commands:
   bt:
