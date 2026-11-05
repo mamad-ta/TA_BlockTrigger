@@ -1,0 +1,244 @@
+# ============================================================================
+#  TA_BlockTrigger - Main configuration
+#  Author: MamaD_TA
+#  Base: Paper 1.20.1+ (works on newer Paper versions as well)
+# ----------------------------------------------------------------------------
+#  Every option below is functional. After editing this file run
+#  /bt reload  (or restart the server) to apply the changes.
+#  Colours inside messages live in messages.yml.
+# ============================================================================
+
+settings:
+  # Master switch of the plugin.
+  # false -> block commands do not run and no block can be configured.
+  #          /bt reload and /bt help keep working so you can re-enable it.
+  enabled: true
+
+  # How far away (in blocks) an administrator may stand from the block that
+  # /bt assigns a command to. Valid range: 1 - 100.
+  max-selection-distance: 10
+
+  # Used when /bt is called without an explicit console/player argument.
+  # console | player
+  default-execution-type: console
+
+  # Used when the last argument of /bt is not right/left/both.
+  # right | left | both
+  default-click-type: right
+
+  # Extra diagnostic output in the server console (interactions, storage, sounds).
+  debug: false
+
+# ----------------------------------------------------------------------------
+#  Who is allowed to manage block commands (/bt).
+#  Clicking configured blocks always works for every player.
+# ----------------------------------------------------------------------------
+permissions:
+  # true  -> only operators (OPs) may use /bt. This is the recommended default.
+  # false -> the permission node below decides who may use /bt.
+  op-only: true
+
+  # true -> the permission node below is required (also useful for LuckPerms).
+  # Combine with op-only: false for a pure permission based setup.
+  use-permission-node: false
+
+  # The node an administrator needs when use-permission-node is true.
+  permission-node: "tablocktrigger.admin"
+
+  # OPs always pass the checks above, even when they do not have the node.
+  ops-bypass: true
+
+# ----------------------------------------------------------------------------
+#  In which worlds block commands may be used.
+# ----------------------------------------------------------------------------
+worlds:
+  # all       -> every world
+  # whitelist -> only the worlds listed in "list"
+  # blacklist -> every world except the worlds listed in "list"
+  mode: "all"
+
+  # World names, case-insensitive. Example:
+  # list:
+  #   - "world"
+  #   - "world_nether"
+  list: []
+
+  # true -> configured blocks also execute their commands in worlds that the
+  #         filter above excludes (the filter then only affects block setup).
+  # false -> the filter is enforced for clicking as well.
+  run-in-filtered-worlds: false
+
+# ----------------------------------------------------------------------------
+#  How players may interact with configured blocks.
+# ----------------------------------------------------------------------------
+interactions:
+  # Allow right click activated commands (blocks with click mode right or both).
+  right-click: true
+
+  # Allow left click activated commands (blocks with click mode left or both).
+  left-click: true
+
+  # Allow blocks that use the "both" click mode at all.
+  both: true
+
+  # Cancel block breaking so a left click can never destroy a configured block.
+  prevent-block-breaking: true
+
+  # Ignore the off-hand duplicate of a right click (prevents double execution).
+  prevent-offhand-duplicates: true
+
+  # Ignore a second interaction with the same block in the same server tick.
+  prevent-duplicate-interactions: true
+
+  # true  -> players can still open chests, press buttons, ... on configured blocks.
+  # false -> the normal use of the block is cancelled (only the command runs).
+  allow-normal-interaction: true
+
+  # true  -> commands still run when another plugin cancelled the interaction.
+  run-when-event-cancelled: false
+
+# ----------------------------------------------------------------------------
+#  How commands are executed.
+# ----------------------------------------------------------------------------
+execution:
+  # Allow blocks configured with the "console" execution type.
+  console: true
+
+  # Allow blocks configured with the "player" execution type.
+  player: true
+
+  # Accept /bt player /spawn right (a leading slash in the command).
+  accept-leading-slash: true
+
+  # Process placeholders in commands. Works together with placeholders.enabled -
+  # placeholders are applied only when both options are true.
+  use-placeholders: true
+
+  # Log every executed block command to the server console.
+  log-commands: false
+
+  # Tell the player when a command could not be executed
+  # (unknown command, missing permission for that command, ...).
+  show-failed-messages: true
+
+  # true -> only players with the node below may trigger block commands.
+  require-permission: false
+  permission-node: "tablocktrigger.use"
+
+# ----------------------------------------------------------------------------
+#  Click cooldowns (prevents command spam).
+# ----------------------------------------------------------------------------
+cooldown:
+  # Enable or disable click cooldowns.
+  enabled: false
+
+  # Cooldown duration in seconds (decimals allowed, e.g. 0.5).
+  seconds: 1.0
+
+  # player -> one cooldown per player
+  # block  -> one cooldown per block, shared by all players
+  type: "player"
+
+  # true -> left clicks and right clicks use separate cooldowns.
+  separate-click-types: true
+
+# ----------------------------------------------------------------------------
+#  Sounds. Every sound can be enabled/disabled and tuned individually.
+#  Accepted formats: ENTITY_EXPERIENCE_ORB_PICKUP | entity.experience_orb.pickup
+#                    | minecraft:entity.experience_orb.pickup
+#  Invalid sound names are reported in the console and safely ignored.
+# ----------------------------------------------------------------------------
+sounds:
+  # Master switch for every plugin sound.
+  enabled: true
+
+  # Played when a command is assigned to a block.
+  set-command:
+    enabled: true
+    sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    volume: 1.0
+    pitch: 1.0
+
+  # Played when a command is removed from a block.
+  remove-command:
+    enabled: true
+    sound: "BLOCK_NOTE_BLOCK_BELL"
+    volume: 1.0
+    pitch: 1.0
+
+  # Played on invalid input (bad syntax, invalid block, unknown sound, ...).
+  invalid-command:
+    enabled: true
+    sound: "ENTITY_VILLAGER_NO"
+    volume: 1.0
+    pitch: 1.0
+
+  # Played when a player without permission tries to manage block commands.
+  no-permission:
+    enabled: true
+    sound: "BLOCK_ANVIL_LAND"
+    volume: 0.6
+    pitch: 0.8
+
+  # Played when a configured block successfully triggered its command.
+  click:
+    enabled: false
+    sound: "UI_BUTTON_CLICK"
+    volume: 1.0
+    pitch: 1.0
+
+  # Played after /bt reload succeeded.
+  reload:
+    enabled: true
+    sound: "BLOCK_NOTE_BLOCK_PLING"
+    volume: 1.0
+    pitch: 1.5
+
+  # Played when a click is blocked by the cooldown.
+  cooldown:
+    enabled: false
+    sound: "BLOCK_NOTE_BLOCK_BASS"
+    volume: 1.0
+    pitch: 1.0
+
+# ----------------------------------------------------------------------------
+#  Built-in placeholders (used inside configured commands).
+#  {player} {uuid} {world} {x} {y} {z}
+# ----------------------------------------------------------------------------
+placeholders:
+  # Master switch - false disables every placeholder.
+  enabled: true
+  # {player} -> player name
+  player: true
+  # {uuid} -> player UUID
+  uuid: true
+  # {world} -> name of the world the player is in
+  world: true
+  # {x} {y} {z} -> player block coordinates
+  coordinates: true
+
+# ----------------------------------------------------------------------------
+#  Data storage.
+# ----------------------------------------------------------------------------
+storage:
+  # File name inside plugins/TA_BlockTrigger/ (.yml required).
+  file: "blocks.yml"
+
+  # Rewrites the data file periodically as a safety net. Changes are always
+  # saved immediately as well, so this is only a fallback.
+  auto-save:
+    enabled: true
+    interval-minutes: 5
+
+  # true -> the data file is read again during /bt reload.
+  # false -> the in-memory block commands are kept and written to the file.
+  reload-on-plugin-reload: true
+
+  # Validate entries while loading and log every invalid entry.
+  validate-on-load: true
+
+  # Keep a copy of the previous data file (blocks.yml.bak) on every save.
+  backup-on-save: false
+
+  # Log every storage read/write operation in the console.
+  debug-logging: false

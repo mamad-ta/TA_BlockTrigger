@@ -1,0 +1,110 @@
+# ============================================================================
+#  TA_BlockTrigger - Messages
+#  Author: MamaD_TA
+# ----------------------------------------------------------------------------
+#  Colour codes:   &a &c &e &l &o ...  and hex colours as &#RRGGBB
+#  Prefix:         put {prefix} anywhere in a message to show the prefix below
+#  Disable:        set a message to '' , '-' or 'disabled' to hide it completely
+#  Placeholders:   each message documents the placeholders it supports
+#  After editing run: /bt reload
+# ============================================================================
+
+prefix: "&8[&b&lTA_BlockTrigger&8] &7"
+
+general:
+  # Sent when a player without permission runs /bt
+  no-permission: "{prefix}&cYou do not have permission to use this command."
+
+  # Sent when settings.enabled is false in config.yml
+  plugin-disabled: "{prefix}&cTA_BlockTrigger is currently disabled in &econfig.yml&c."
+
+  # Sent when a console-only command is used from the console
+  player-only: "{prefix}&cThis command needs to be run by a player who is looking at a block."
+
+  # Sent when /bt is used without arguments
+  usage: "{prefix}&7Usage: &b/bt <console|player> <command> [right|left|both]&7, &b/bt remove&7, &b/bt reload"
+
+  # Sent when another plugin or the plugin itself blocks breaking a configured block
+  block-protected: "{prefix}&cThis block is protected by TA_BlockTrigger and cannot be broken."
+
+  # Generic error message (placeholders: {error})
+  error: "{prefix}&cAn error occurred: &7{error}"
+
+select:
+  # Sent when the administrator is not looking at a block
+  # Placeholders: {distance}
+  no-block: "{prefix}&cYou are not looking at a block within &e{distance}&c blocks. Look at the block you want to configure."
+
+set:
+  # Command assigned successfully
+  # Placeholders: {world} {x} {y} {z} {block} {execution} {click} {command} {replaced}
+  success: "{prefix}&aCommand bound to &e{block}&a at &b{world}&7 [{x}, {y}, {z}]&a. Execution: &b{execution}&a, click: &b{click}&a, command: &f/{command}"
+
+  # The command part is missing or empty
+  invalid-command: "{prefix}&cYou must provide the command to run. Usage: &b/bt <console|player> <command> [right|left|both]"
+
+  # Commands with a leading slash are not allowed (execution.accept-leading-slash: false)
+  leading-slash: "{prefix}&cCommands with a leading slash are disabled in &econfig.yml&c. Write the command without &f/&c."
+
+  # The configured execution type is disabled in config.yml
+  # Placeholders: {type}
+  execution-disabled: "{prefix}&cThe execution type &e{type}&c is disabled in &econfig.yml&c."
+
+  # The configured click type is disabled in config.yml
+  # Placeholders: {click}
+  click-disabled: "{prefix}&cThe click type &e{click}&c is disabled in &econfig.yml&c."
+
+remove:
+  # Command removed successfully
+  # Placeholders: {world} {x} {y} {z} {block} {execution} {click} {command}
+  success: "{prefix}&aRemoved the command from &e{block}&a at &b{world}&7 [{x}, {y}, {z}]&a."
+
+  # The targeted block has no command configured
+  # Placeholders: {world} {x} {y} {z}
+  no-command: "{prefix}&cThe block you are looking at has no command configured."
+
+reload:
+  # Reload finished
+  # Placeholders: {time} {blocks}
+  success: "{prefix}&aConfiguration reloaded in &e{time} ms&a. &7({blocks} block command(s) active)"
+
+  # Reload failed
+  # Placeholders: {error}
+  failed: "{prefix}&cReload failed: &7{error}"
+
+cooldown:
+  # Sent when a click is still cooling down
+  # Placeholders: {seconds} {player}
+  active: "{prefix}&cPlease wait &e{seconds}s&c before using this block again."
+
+execution:
+  # The player may not trigger block commands (execution.require-permission: true)
+  no-permission: "{prefix}&cYou are not allowed to use this block."
+
+  # The command could not be executed
+  # Placeholders: {command}
+  failed: "{prefix}&cThe command could not be executed: &7/{command}"
+
+  # The execution type is disabled at runtime
+  # Placeholders: {type}
+  type-disabled: "{prefix}&cThe execution type &e{type}&c is disabled in &econfig.yml&c."
+
+  # Block commands are disabled in the world the player is in
+  # Placeholders: {world}
+  world-disabled: "{prefix}&cBlock commands are disabled in the world &e{world}&c."
+
+help:
+  # Shown by /bt help - one line per list entry (an empty string creates a blank line)
+  # Placeholders: {distance} {default-execution} {default-click} {placeholders}
+  lines:
+    - "&8&m----------&r &b&lTA_BlockTrigger &8&m----------"
+    - "&b/bt <console|player> <command> [right|left|both]"
+    - "&7  Binds a command to the block you are looking at."
+    - "&7  console = run as the server, player = run as the clicking player."
+    - "&7  Defaults: execution &f{default-execution}&7, click &f{default-click}&7, distance &f{distance}&7."
+    - "&b/bt remove &7- removes the command from the targeted block."
+    - "&b/bt reload &7- reloads config.yml, messages.yml and the block data."
+    - "&b/bt help &7- shows this help page."
+    - "&7Placeholders: &f{placeholders}"
+    - "&7Example: &f/bt console eco give {player} 100 both"
+    - "&8&m----------------------------------"
