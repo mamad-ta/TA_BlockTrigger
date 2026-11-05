@@ -1,7 +1,7 @@
 package com.mamadta.tablocktrigger.config;
 
 import com.mamadta.tablocktrigger.TABlockTrigger;
-import net.kyori.adventure.sound.Sound;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -22,8 +22,11 @@ import java.util.Map;
  *   <li>Namespaced key style: {@code minecraft:entity.experience_orb.pickup}</li>
  * </ul>
  *
- * <p>Playback uses the Adventure sound API (key based). This keeps the plugin working on
- * 1.20.1 and on newer Paper versions where {@code org.bukkit.Sound} is no longer an enum.</p>
+ * <p>Playback uses the plain Bukkit {@link Player#playSound(Location, String, float, float)}
+ * API. Sound names are resolved to Minecraft keys at load time, so the plugin never compiles
+ * against {@code org.bukkit.Sound} - which is an enum on 1.20.1 and an interface with static
+ * constants on newer Paper versions. That keeps one single jar working on Paper, Spigot and
+ * CraftBukkit, on 1.20.1 and on the 1.21.x line.</p>
  */
 public final class SoundManager {
 
@@ -241,12 +244,8 @@ public final class SoundManager {
             return;
         }
         try {
-            Sound sound = Sound.sound(
-                    net.kyori.adventure.key.Key.key(setting.key),
-                    Sound.Source.MASTER,
-                    setting.volume,
-                    setting.pitch);
-            player.playSound(sound);
+            // Plain Bukkit API: works on Paper, Spigot and CraftBukkit, on every version.
+            player.playSound(player.getLocation(), setting.key, setting.volume, setting.pitch);
         } catch (Throwable throwable) {
             // Never let a sound issue break a command or an interaction.
             if (plugin.getConfigManager().isDebug()) {

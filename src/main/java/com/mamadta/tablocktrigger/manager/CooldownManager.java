@@ -3,12 +3,12 @@ package com.mamadta.tablocktrigger.manager;
 import com.mamadta.tablocktrigger.TABlockTrigger;
 import com.mamadta.tablocktrigger.config.ConfigManager;
 import com.mamadta.tablocktrigger.model.BlockCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Handles click cooldowns and the duplicate-interaction guard.
@@ -16,6 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>Cooldowns can be tracked per player (default) or per block, optionally separately for
  * left and right clicks. Entries are stored in concurrent maps and cleaned up periodically
  * so the maps cannot grow without bound.</p>
+ *
+ * <p>The duplicate-interaction guard needs a notion of "current tick". {@code
+ * Bukkit.getCurrentTick()} only exists on Paper, so this class keeps its own tick counter
+ * instead, advanced once per server tick by the plugin's housekeeping task. That keeps the
+ * plugin portable to Spigot and CraftBukkit at no cost.</p>
  */
 public final class CooldownManager {
 
@@ -24,8 +29,14 @@ public final class CooldownManager {
     /** key -> epoch millis when the cooldown expires. */
     private final Map<String, Long> cooldowns = new ConcurrentHashMap<>();
 
-    /** key -> server tick of the last processed interaction. */
+    /** key -> plugin tick of the last processed interaction. */
     private final Map<String, Integer> recentInteractions = new ConcurrentHashMap<>();
+
+    /**
+     * Plugin-side tick counter, advanced by {@link #tick()} once per server tick.
+     * Replaces Paper's {@code Bukkit.getCurrentTick()}, which does not exist on Spigot.
+     */
+    private final AtomicInteger currentTick = new AtomicInteger();
 
     public CooldownManager(TABlockTrigger plugin) {
         this.plugin = plugin;
@@ -47,7 +58,7 @@ public final class CooldownManager {
     public boolean isDuplicate(Player player, Block block, boolean leftClick) {
         String key = player.getUniqueId() + "|" + block.getWorld().getUID() + "|"
                 + block.getX() + "," + block.getY() + "," + block.getZ() + "|" + (leftClick ? "l" : "r");
-        int tick = Bukkit.getCurrentTick();
+        int tick = currentTick.get();
         Integer previous = recentInteractions.put(key, tick);
         return previous != null && previous == tick;
     }
@@ -120,8 +131,23 @@ public final class CooldownManager {
         long now = System.currentTimeMillis();
         cooldowns.entrySet().removeIf(entry -> entry.getValue() <= now);
 
-        int currentTick = Bukkit.getCurrentTick();
-        recentInteractions.entrySet().removeIf(entry -> currentTick - entry.getValue() > 20);
+        int tick = currentTick.get();
+        recentInteractions.entrySet().removeIf(entry -> tick - entry.getValue() > 20);
+    }
+
+    /**
+     * Advances the plugin-side tick counter by one.
+     *
+     * <p>Called once per server tick from the plugin's housekeeping task, which is the
+     * portable replacement for Paper's {@code Bukkit.getCurrentTick()}.</p>
+     */
+    public void tick() {
+        currentTick.incrementAndGet();
+    }
+
+    /** @return the current plugin-side tick (monotonic, starts at 0). */
+    public int ticks() {
+        return currentTick.get();
     }
 
     /** Clears every tracked cooldown (used on disable/reload). */

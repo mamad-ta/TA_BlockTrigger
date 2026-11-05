@@ -1,45 +1,37 @@
 package com.mamadta.tablocktrigger.util;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.ChatColor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Colour helpers.
+ * Colour helpers that only use the plain Bukkit API, so they work identically on
+ * Paper, Spigot and CraftBukkit.
  *
  * <p>Supports classic {@code &0-&f} / {@code &k-&o} codes as well as hex colours in the
- * {@code &#RRGGBB} format. Hex colours are translated to the {@code &x&r&r&g&g&b&b} form
- * understood by the legacy serializer, which keeps the same code working on every
- * Paper version without relying on version specific APIs.</p>
+ * {@code &#RRGGBB} format. Hex colours are translated to the {@code &x&r&r&g&g&b&b} form,
+ * which {@link ChatColor#translateAlternateColorCodes(char, String)} understands on every
+ * server implementation.</p>
  */
 public final class TextUtil {
 
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
 
-    private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.builder()
-            .character('&')
-            .hexColors()
-            .build();
-
-    private static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
-
     private TextUtil() {
     }
 
     /**
-     * Converts a configuration string (with colour codes) into a component.
+     * Converts a configuration string (with colour codes) into a coloured Bukkit string.
      *
      * @param input raw text from configuration
-     * @return coloured component, never {@code null}
+     * @return coloured text, never {@code null}
      */
-    public static Component color(String input) {
+    public static String color(String input) {
         if (input == null || input.isEmpty()) {
-            return Component.empty();
+            return "";
         }
-        return SERIALIZER.deserialize(translateHex(input));
+        return ChatColor.translateAlternateColorCodes('&', translateHex(input));
     }
 
     /**
@@ -49,8 +41,11 @@ public final class TextUtil {
      * @return translated text
      */
     public static String translateHex(String input) {
-        if (input == null || input.indexOf('#') < 0) {
-            return input == null ? "" : input;
+        if (input == null) {
+            return "";
+        }
+        if (input.indexOf('#') < 0) {
+            return input;
         }
         Matcher matcher = HEX_PATTERN.matcher(input);
         StringBuilder out = new StringBuilder(input.length() + 16);
@@ -76,6 +71,7 @@ public final class TextUtil {
         if (input == null || input.isEmpty()) {
             return "";
         }
-        return PLAIN.serialize(color(input));
+        String translated = ChatColor.translateAlternateColorCodes('&', translateHex(input));
+        return ChatColor.stripColor(translated);
     }
 }
