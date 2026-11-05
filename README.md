@@ -76,7 +76,8 @@ to blocks — executed as the console or as the clicking player.
 
 ## 🚀 Installation
 
-1. Download **`TA_BlockTrigger-1.0.0.jar`** from the [releases](../../releases) page
+1. Download **`TA_BlockTrigger-1.0.0.jar`** from the
+   [releases page](https://github.com/mamad-ta/TA_BlockTrigger/releases/latest)
    (or build it yourself, see below).
 2. Drop the jar into your server's `plugins/` folder.
 3. Restart the server. The plugin generates:
@@ -103,6 +104,9 @@ Output: **`target/TA_BlockTrigger-1.0.0.jar`**
 Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT` with `--release 17`.
 To build for another Paper version, change the `paper.version` property in `pom.xml` —
 the source uses no version-specific API.
+
+The same build runs in CI on every push (`.github/workflows/build.yml`); pushing a `v*` tag
+builds the jar and attaches it to that release automatically.
 
 ---
 
