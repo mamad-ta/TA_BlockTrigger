@@ -47,7 +47,7 @@ Everything is managed with one command, `/bt`, and configured in three YAML file
 
 ## 2. Installation
 
-1. Put `TA_BlockTrigger-1.0.0.jar` into your server's `plugins/` folder.
+1. Put `TA_BlockTrigger-1.0.1.jar` into your server's `plugins/` folder.
 2. Start (or restart) the server. The plugin creates:
    ```
    plugins/TA_BlockTrigger/
@@ -55,7 +55,7 @@ Everything is managed with one command, `/bt`, and configured in three YAML file
    ├── messages.yml   every message the plugin sends
    └── blocks.yml     your block bindings (written by the plugin)
    ```
-3. Check the console for `TA_BlockTrigger v1.0.0 enabled` (and for any warnings about invalid
+3. Check the console for `TA_BlockTrigger v1.0.1 enabled` (and for any warnings about invalid
    config values — the plugin replaces them with the defaults instead of failing).
 
 **Requirements:** Paper 1.20.1 or newer, Java 17 or newer. No other plugins or libraries.
@@ -362,13 +362,30 @@ reports the elapsed time and the number of active bindings.
 ## 14. Multi-version compatibility
 
 - Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT`, target bytecode Java 17,
-  `api-version: '1.20'`.
+  `api-version: '1.20.1'`.
+- **`api-version` is the minimum server version.** `'1.20.1'` means: load on 1.20.1 and every
+  later release, including the 1.21.x line. It is deliberately not `'1.20'`: servers report
+  their own version, and a server running 1.20.1 does not accept a plugin that declares a
+  version string it does not know.
 - **No NMS**, no `CraftBukkit`, no version-specific classes — only the stable Bukkit/Paper API.
 - Only long-stable events are used: `PlayerInteractEvent`, `BlockDamageEvent`,
   `BlockBreakEvent`, `WorldLoadEvent`.
+- No enum constants are compiled in: sound names are resolved at runtime via reflection on
+  `org.bukkit.Sound`, so the plugin survives the `Sound`-enum → `Sound`-interface change.
 - Built with `-Xlint:deprecation`; the code deliberately avoids deprecated calls.
 - To build for a different Paper version, change the `paper.version` property in `pom.xml` and
   rebuild — no source changes are required.
+
+### Supported server versions
+
+| Paper | Status |
+|---|---|
+| 1.20.1 | ✅ tested reference version |
+| 1.20.2 – 1.20.4 | ✅ supported |
+| 1.20.5 – 1.20.6 | ✅ supported (Java 21 on the server) |
+| 1.21.x | ✅ supported (Java 21 on the server) |
+| older than 1.20.1 | ❌ refused at load |
+| Folia / Spigot / CraftBukkit | ❌ not supported (main-thread dispatch only) |
 
 ---
 
