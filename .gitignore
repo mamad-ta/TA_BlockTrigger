@@ -22,3 +22,7 @@ Thumbs.db
 run/
 server/
 plugins/
+
+# Browser "re-upload" copies of files already in the repo
+*([0-9]).zip
+*([0-9]).jar
