@@ -79,6 +79,8 @@ to blocks — executed as the console or as the clicking player.
 1. Download **`TA_BlockTrigger-1.0.0.jar`** from the
    [releases page](https://github.com/mamad-ta/TA_BlockTrigger/releases/latest)
    (or build it yourself, see below).
+   The repository contains **source code only** — binaries are never committed, the jar is
+   always taken from the releases page (or from your own build).
 2. Drop the jar into your server's `plugins/` folder.
 3. Restart the server. The plugin generates:
    ```
