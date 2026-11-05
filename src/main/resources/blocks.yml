@@ -1,0 +1,22 @@
+# ============================================================================
+#  TA_BlockTrigger - block command storage
+#  Author: MamaD_TA
+# ----------------------------------------------------------------------------
+#  This file is written automatically by the plugin. Prefer using
+#  /bt <console|player> <command> [right|left|both]  and  /bt remove
+#  instead of editing it by hand. Stop the server before manual edits.
+#
+#  Format:
+#    blocks:
+#      - world: "world"                 # world name
+#        world-uuid: "<uuid>"           # world UUID (primary identifier)
+#        x: 10
+#        y: 64
+#        z: -5
+#        execution: CONSOLE             # CONSOLE or PLAYER
+#        click: RIGHT                   # RIGHT, LEFT or BOTH
+#        command: "say Hello World"     # command without a leading slash
+#        created-by: "Admin"            # optional
+#        created-at: 1735689600000      # optional
+# ============================================================================
+blocks: []
