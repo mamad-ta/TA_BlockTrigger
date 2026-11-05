@@ -4,12 +4,12 @@
 
 **Bind any command to any block. One click, and it runs.**
 
-A lightweight, fully configurable Paper plugin that lets administrators attach commands
+A lightweight, fully configurable Paper/Spigot plugin that lets administrators attach commands
 to blocks — executed as the console or as the clicking player.
 
-[![Paper](https://img.shields.io/badge/Paper-1.20.1%2B-3b82f6?style=for-the-badge)](https://papermc.io)
+[![Paper](https://img.shields.io/badge/Paper-1.20.1%2B-3b82f6?style=for-the-badge)](https://papermc.io) [![Spigot](https://img.shields.io/badge/Spigot-1.20.1%2B-f59e0b?style=for-the-badge)](https://www.spigotmc.org)
 [![Java](https://img.shields.io/badge/Java-17%2B-f97316?style=for-the-badge)](https://adoptium.net)
-[![Version](https://img.shields.io/badge/version-1.0.1-22c55e?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-1.1.0-22c55e?style=for-the-badge)](#)
 [![No Dependencies](https://img.shields.io/badge/dependencies-none-8b5cf6?style=for-the-badge)](#)
 
 </div>
@@ -68,28 +68,34 @@ to blocks — executed as the console or as the clicking player.
 
 | | |
 |---|---|
-| **Server** | Paper **1.20.1 – 1.21.x** (any server whose Minecraft version is ≥ 1.20.1) |
+| **Server** | **Paper, Spigot or CraftBukkit** — Minecraft **1.20.1 and newer** |
 | **Java** | 17+ (21 required for 1.20.5+ / 1.21.x servers) |
 | **Dependencies** | None |
 
-### Tested / supported servers
+### Supported servers
 
-| Paper version | Status | Notes |
+| Server / version | Status | Notes |
 |---|---|---|
-| 1.20.1 | ✅ **tested** | built against this API; reference version |
-| 1.20.2 – 1.20.4 | ✅ supported | same API surface, loads with `api-version: '1.20.1'` |
+| **Paper 1.20.1** | ✅ supported | reference version, built against `spigot-api:1.20.1` |
+| **Spigot 1.20.1** | ✅ supported | one jar for all platforms |
+| **CraftBukkit 1.20.1** | ✅ supported | |
+| 1.20.2 – 1.20.4 | ✅ supported | same API surface |
 | 1.20.5 – 1.20.6 | ✅ supported | needs Java 21 on the server |
-| 1.21.x | ✅ supported | needs Java 21; sounds resolved by key (no enum) |
-| < 1.20.1 | ❌ not supported | plugin will refuse to load |
-| Folia / Spigot / CraftBukkit | ❌ not supported | commands are dispatched on the main thread |
+| 1.21.x | ✅ supported | needs Java 21; sounds resolved by key |
+| older than 1.20.1 | ❌ not supported | `api-version: '1.20'` stops it from loading |
+| Folia | ❌ not supported | commands are dispatched on the main thread |
+
+The plugin is compiled against **`spigot-api`**, not `paper-api`. That guarantees only API
+shared by all three platforms is used — there is no `getPluginMeta()`, no
+`Bukkit.getCurrentTick()` and no Adventure anywhere in the sources.
 
 ---
 
 ## 🚀 Installation
 
-1. Download **`TA_BlockTrigger-1.0.1.jar`** from the
+1. Download **`TA_BlockTrigger-1.1.0.jar`** from the
    [releases page](https://github.com/mamad-ta/TA_BlockTrigger/releases/latest)
-   — for older Paper 1.20.1 servers use **v1.0.0**, for 1.20.1+ (including 1.21.x) use **v1.0.1**
+   — this single jar works on Paper, Spigot and CraftBukkit from 1.20.1 up
    (or build it yourself, see below).
    The repository contains **source code only** — binaries are never committed, the jar is
    always taken from the releases page (or from your own build).
@@ -115,12 +121,13 @@ mvn -B clean package
 
 Output: **`target/TA_BlockTrigger-1.0.1.jar`**
 
-Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT` with `--release 17`.
-To build for another Paper version, change the `paper.version` property in `pom.xml` —
+Compiled against `spigot-api:1.20.1-R0.1-SNAPSHOT` with `--release 17`.
+To build for another version, change the `spigot.version` property in `pom.xml` —
 the source uses no version-specific API.
 
-The same build runs in CI on every push (`.github/workflows/build.yml`); pushing a `v*` tag
-builds the jar and attaches it to that release automatically.
+The same build runs in CI on every push (`.github/workflows/build.yml`) against
+`spigot-api:1.20.1-R0.1-SNAPSHOT`; pushing a `v*` tag builds the jar and attaches it to that
+release automatically.
 
 ---
 
@@ -344,14 +351,16 @@ broken by accident.
 
 ## 🧱 Compatibility
 
-- Compiled against `paper-api:1.20.1-R0.1-SNAPSHOT`, `api-version: '1.20.1'`, Java 17 bytecode.
-  `api-version` declares the **minimum** server version, so the plugin loads on every Paper
-  release from 1.20.1 up to and including the 1.21.x line — a `'1.20'` value would have been
-  rejected on 1.20.1 servers that do not know that legacy version.
+- Compiled against **`spigot-api:1.20.1-R0.1-SNAPSHOT`**, `api-version: '1.20'`, Java 17 bytecode.
+  Compiling against the Spigot API (the common denominator) is what makes one single jar run on
+  Paper, Spigot and CraftBukkit alike.
 - **No NMS**, no `CraftBukkit`, no version-specific code.
+- **No Paper-only API**: `getPluginMeta()` (Paper 1.20.4+), `Bukkit.getCurrentTick()` (Paper)
+  and Adventure are not used anywhere. Versions/tick counting/colours go through plain Bukkit.
 - Backwards and forwards compatible in practice: no removed API is used, no enum constants are
   compiled in (sounds go through reflection + keys), and no `1.20.5` item/dialog API is touched.
-- Sounds are played through key-based Adventure sounds, so they keep working on newer Paper
+- Sounds are resolved to Minecraft keys at load and played with
+  `Player#playSound(Location, String, float, float)`, so they keep working on newer Paper
   versions where `org.bukkit.Sound` is no longer an enum.
 - Only long-stable events are used: `PlayerInteractEvent`, `BlockDamageEvent`,
   `BlockBreakEvent`, `WorldLoadEvent`.
