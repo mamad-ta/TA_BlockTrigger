@@ -1,0 +1,87 @@
+name: Bug report
+description: Something is not working the way the docs say it should.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Filling in the details below makes a fix
+        much faster — most "it doesn't work" reports turn out to be a version mismatch.
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: The jar you are running, e.g. `1.1.0`.
+      placeholder: "1.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: server
+    attributes:
+      label: Server software
+      options:
+        - Paper
+        - Spigot
+        - CraftBukkit
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: input
+    id: server-version
+    attributes:
+      label: Server version
+      description: Output of `/version` — the full string, including the build number.
+      placeholder: "This server is running Paper version 1.20.1-R0.1-SNAPSHOT (build 196)"
+    validations:
+      required: true
+
+  - type: input
+    id: java-version
+    attributes:
+      label: Java version
+      description: Output of `java -version`.
+      placeholder: "openjdk version 17.0.9"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happens
+      description: The behaviour you see, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Look at a stone block
+        2. Run `/bt console give {player} diamond 1 both`
+        3. Right-click the block
+        4. Nothing happens
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server log / stack trace
+      description: Paste the relevant part of `logs/latest.log`. Use a code block.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant config
+      description: Only the sections that matter — `config.yml` or the `blocks.yml` entry.
+      render: yaml
+    validations:
+      required: false

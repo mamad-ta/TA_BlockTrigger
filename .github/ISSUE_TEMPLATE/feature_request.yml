@@ -1,0 +1,45 @@
+name: Feature request
+description: Suggest something the plugin should do.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests are welcome. The more concrete the use case, the more likely it is to
+        make it in — "we run a lobby and need this" beats "would be nice".
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the situation on your server, not the solution yet.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like it to do?
+      description: Command syntax, config key, or behaviour — as concretely as you can.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What are you doing instead today?
+      description: Workarounds you already use, and why they are not enough.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: server
+    attributes:
+      label: Which server software does this need to work on?
+      options:
+        - All of them (Paper, Spigot, CraftBukkit)
+        - Paper / forks only
+        - Does not matter
+    validations:
+      required: true
