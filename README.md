@@ -11,6 +11,7 @@ to blocks — executed as the console or as the clicking player.
 [![Java](https://img.shields.io/badge/Java-17%2B-f97316?style=for-the-badge)](https://adoptium.net)
 [![Version](https://img.shields.io/badge/version-1.1.0-22c55e?style=for-the-badge)](#)
 [![No Dependencies](https://img.shields.io/badge/dependencies-none-8b5cf6?style=for-the-badge)](#)
+[![License](https://img.shields.io/badge/license-MIT-a855f7?style=for-the-badge)](LICENSE)
 
 </div>
 
@@ -418,12 +419,20 @@ TA_BlockTrigger/
   multi-version notes).
 - **[docs/CONFIGURATION.md](docs/CONFIGURATION.md)** — every option of `config.yml`,
   `messages.yml` and `blocks.yml`.
+- **[CHANGELOG.md](CHANGELOG.md)** — what changed in each release.
+
+---
+
+## 📄 License
+
+Released under the [MIT License](LICENSE) — use it, modify it, ship it on your own server.
+Attribution is appreciated but not required.
 
 ---
 
 <div align="center">
 
-**Author:** MamaD_TA
+**Author:** MamaD_TA · [@mamad-ta](https://github.com/mamad-ta)
 
 If this plugin helps your server, a ⭐ on the repo is appreciated.
 

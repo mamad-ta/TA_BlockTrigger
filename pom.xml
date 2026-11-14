@@ -12,6 +12,39 @@
 
     <name>TA_BlockTrigger</name>
     <description>Allows administrators to assign commands to blocks and execute them through player interactions. Works on Paper, Spigot and CraftBukkit (1.20.1+).</description>
+    <url>https://github.com/mamad-ta/TA_BlockTrigger</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>mamad-ta</id>
+            <name>MamaD_TA</name>
+            <url>https://github.com/mamad-ta</url>
+            <roles>
+                <role>author</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/mamad-ta/TA_BlockTrigger.git</connection>
+        <developerConnection>scm:git:ssh://github.com/mamad-ta/TA_BlockTrigger.git</developerConnection>
+        <url>https://github.com/mamad-ta/TA_BlockTrigger</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/mamad-ta/TA_BlockTrigger/issues</url>
+    </issueManagement>
 
     <properties>
         <java.version>17</java.version>
